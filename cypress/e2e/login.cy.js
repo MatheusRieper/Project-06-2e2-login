@@ -1,47 +1,57 @@
 describe('login', () => {
 
-  // Rodand Page, Apagina de login pode apresentar lentidão devido a scripts externos
   beforeEach(() => {
-    // startind the page 
-    cy.start()
-    // Verification the login page
+
+    cy.openPage()
     cy.url().should('include', '/login')
   })
 
-  // Valid Login
-  describe('successfull', () => {
+  // ---------- SUCCESSFULL LOGIN ----------
+  describe('successfull login', () => {
 
-    it('Valid login', () => {
+    it('should login registered', () => {
 
-      cy.login('test', 'Qa@2025Test')
-      cy.url().should('include', '/profile')
+      cy.login(
+        Cypress.env('ADMIN_USER'),
+        Cypress.env('ADMIN_PASS')
+      )
 
+      cy.url({ timeout: 10000 }).should('include', '/profile')
     })
   })
 
+  // ---------- INVALID LOGIN ----------
+
+  const INVALID_USER = 'test'
+  const INVALID_PASS = 'pass'
+
   describe('Invalid Login', () => {
 
-    it('Invalid E-mail', () => {
+    it('should not login with invalid E-mail', () => {
 
-      cy.login('testando', 'Qa@2025Test')
+      cy.login(
+        INVALID_USER,
+        Cypress.env('ADMIN_PASS')
+      )
 
-      // Message Error
-      cy.get('#name')
-        .should('contain.text', 'Invalid username or password!')
+      cy.get('#name', { timeout: 10000 })
+        .should('be.visible')
+        .and('contain.text', 'Invalid username or password')
 
-      // Verification the login page
       cy.url().should('include', '/login')
     })
 
-    it('Invalid Password', () => {
+    it('should not login with invalid Password', () => {
 
-      cy.login('test', '123456')
+      cy.login(
+        Cypress.env('ADMIN_USER'),
+        INVALID_PASS
+      )
 
-      // Message Error
-      cy.get('#name')
-        .should('contain.text', 'Invalid username or password!')
+      cy.get('#name', { timeout: 10000 })
+        .should('be.visible')
+        .and('contain.text', 'Invalid username or password')
 
-      // Verification the login page
       cy.url().should('include', '/login')
     })
   })

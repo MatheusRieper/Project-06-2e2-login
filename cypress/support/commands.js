@@ -24,26 +24,27 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-// Startind the page
-Cypress.Commands.add('start', () => {
 
-    // Resolution Page
+Cypress.Commands.add('openPage', () => {
     cy.viewport(1440, 900)
-    // start Page
     cy.visit('https://demoqa.com/login')
 })
 
-// Commands login
 Cypress.Commands.add('login', (email, password) => {
 
-    cy.get('#userName')
+    cy.get('#userName', { timeout: 10000 })
         .should('be.visible')
+        .clear()
         .type(email)
 
-    cy.get('#password')
+
+    cy.get('#password', { timeout: 10000 })
         .should('be.visible')
+        .clear()
         .type(password)
 
     cy.get('#login')
+        .should('be.visible')
+        .and('be.enabled')
         .click()
 })
